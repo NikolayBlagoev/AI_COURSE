@@ -97,8 +97,9 @@ def is_win(game_state,x,y):
 
 def main():
     game_state = np.zeros((7,6),dtype=np.int32)
-    agent1 = Smart_Agent(1,3)
-    agent2 = Smart_Agent(-1,1)
+    
+    agent2 = ML_Agent2(-1,0,"Classifiers/Sequential.joblib")
+    agent1 = ML_Agent(1,0,"Classifiers/MLP.joblib")
     game_over = False
     turn =1
     
