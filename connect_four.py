@@ -98,8 +98,9 @@ def is_win(game_state,x,y):
 def main():
     game_state = np.zeros((7,6),dtype=np.int32)
     
-    agent2 = ML_Agent2(-1,0,"Classifiers/Sequential.joblib")
-    agent1 = ML_Agent(1,0,"Classifiers/MLP.joblib")
+    agent1 = ML_Agent(1,0,"Classifiers/RANDOMFOREST.joblib")
+    agent2 = ML_Agent(-1,0,"Classifiers/RANDOMFOREST_COMBINED.joblib")
+    # agent2 = Smart_Agent(-1,1)
     game_over = False
     turn =1
     

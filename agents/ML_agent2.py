@@ -66,13 +66,36 @@ class ML_Agent2(Agent):
         print("BEST CHOICE IS %d with score %d"%(choice,best_score2))
         return choice
   
+    # def evaluate_board(self,game_state, order):
+    #     game_rep = []
+    #     for row in game_state:
+    #         y = 5
+    #         while y>=0:
+    #             game_rep.append(row[y])
+    #             y-=1
+    #     game = dict()
+    #     i=1
+    #     for x in game_rep:
+    #         if i<10:
+    #             game.update({"pos_0"+str(i):x})
+    #         else:
+    #             game.update({"pos_"+str(i):x})
+    #         i+=1
+        
+    #     data_frame = pd.DataFrame(game,index=[0])
+        
+    #     out = np.argmax(self.model.predict(data_frame))-1
+    #     return 1000 if out==order else -1000
+
     def evaluate_board(self,game_state, order):
         game_rep = []
-        for row in game_state:
-            y = 5
-            while y>=0:
-                game_rep.append(row[y])
-                y-=1
+        y=0
+        while y<6:
+            x = 0
+            while x<7:
+                game_rep.append(game_state[x][y])
+                x+=1
+            y+=1
         game = dict()
         i=1
         for x in game_rep:
@@ -86,6 +109,7 @@ class ML_Agent2(Agent):
         
         out = np.argmax(self.model.predict(data_frame))-1
         return 1000 if out==order else -1000
+    
     def is_win(self,game_state,x,y):
         order = game_state[x][y]
         
