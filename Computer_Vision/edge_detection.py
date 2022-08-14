@@ -1,8 +1,6 @@
-from math import sqrt
 from PIL import Image
 import cv2 as cv
 import numpy as np
-from scipy.signal import convolve2d
 # EDGE DETECTION:
 LAPLACIAN_OF_GAUSSIAN = [[-1,-1,-1],[-1,8,-1],[-1,-1,-1]]
 def apply_kernel(gray,MAXX,MAXY,kernel):
@@ -18,8 +16,7 @@ def apply_kernel(gray,MAXX,MAXY,kernel):
 
 img = Image.open("connect-4.jpg")
 pixels = img.load()
-cv2_img = np.asarray(img)
-cv2_img = cv2_img.astype(np.uint8)
+cv2_img = np.asarray(img, dtype=np.uint8)
 img_gray = cv.cvtColor(cv2_img, cv.COLOR_BGR2GRAY)
 # edges = cv.Canny(img_gray,100,180)
 edges = apply_kernel(img_gray,img.width,img.height,LAPLACIAN_OF_GAUSSIAN)

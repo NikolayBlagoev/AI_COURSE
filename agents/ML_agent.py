@@ -5,10 +5,10 @@ import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 class ML_Agent(Agent):
  
-    def __init__(self,order,max_level,file_name):
+    def __init__(self,order):
         self.order = order
-        self.model = load(file_name)
-        self.MAX_LEVEL=max_level
+        self.model = load("/Classifiers/RFCLASSIFIER.joblib")
+        self.MAX_LEVEL=1
 
 
     def make_move(self,game_state,choice,order):
@@ -21,9 +21,9 @@ class ML_Agent(Agent):
 
     def move(self, game_state, turn):
         valid = []
-        valid2 = []
+        
         best_score = -10000000000
-        best_score2 = -10000000000
+        
         x=0
         for columns in game_state:
             if columns[0]==0:
@@ -45,24 +45,27 @@ class ML_Agent(Agent):
                     
                 game_state[x][y]=0
                 # print("MOVE: %d HAS SCORE: %d ORDER: %d"%(x,score2,self.order))
-                if score2>best_score2:
-                    valid2 = []
-                    best_score2 = score2
-                    valid2.append(x)
-                elif score2==best_score2:
-                    valid2.append(x)
+                if score2>best_score:
+                    valid = []
+                    best_score = score2
+                    valid.append(x)
+                elif score2==best_score:
+                    valid.append(x)
                 
             x=x+1
-        if len(valid2)<1:
+        if len(valid)<1:
             return -1
         # print("BEST CHOICE IS %d with score %d"%(valid2[0],best_score2))
         # print(game_state)
         # print("======================")
         # randint(len(valid2),size=1)[0]]
-        choice = valid2[randint(len(valid2),size=1)[0]]
-        print("BEST CHOICE IS %d with score %d"%(choice,best_score2))
+        choice = valid[randint(len(valid),size=1)[0]]
+        print("BEST CHOICE IS %d with score %d"%(choice,best_score))
         return choice
-  
+    
+    def set_classifier(self, filename):
+        self.model = load("/Classifiers/RFCLASSIFIER.joblib")
+    
     def evaluate_board(self,game_state, order):
         game_rep = []
         for row in game_state:
@@ -81,7 +84,12 @@ class ML_Agent(Agent):
        
         data_frame = pd.DataFrame(game,index=[0])
         out = self.model.predict(data_frame)
-        return 1000 if out==order else -1000
+        if out == self.order:
+            return 1000
+        elif out == 0:
+            return 0
+        else:
+            return -1000
     def is_win(self,game_state,x,y):
         order = game_state[x][y]
         

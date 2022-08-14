@@ -1,5 +1,5 @@
 from numpy.random import randint
-class Smart_Agent(object):
+class Alpha_Beta_Agent(object):
     def __init__(self,order):
         self.order = order
 
@@ -173,7 +173,7 @@ class Smart_Agent(object):
                 y+=1
             x+=1
         return score
-    def evaluate(self, game_board, x,y, order, depth, turn, minmax, a):
+    def evaluate(self, game_board, x,y, order, depth, turn, minmax, alpha, beta):
         is_win, score_ret = self.score_func(game_board,order*-1,x,y)
         if is_win:
             return score_ret*minmax*-1
@@ -188,12 +188,25 @@ class Smart_Agent(object):
             if column[0] == 0:
                 yi = self.put_disc(xi,game_board)
                 game_board[xi][yi] = order
-                score = self.evaluate(game_board, xi, yi,order*-1, depth+1, turn+1, minmax*-1,a+"  ")
+                score = self.evaluate(game_board, xi, yi,order*-1, depth+1, turn+1, minmax*-1,alpha,beta)
+                game_board[xi][yi] = 0
                 # print(a+" CHOICE %d with score %d, %d"%(xi,score,minmax))
                 if (score>best_score and minmax ==1) or (score<best_score and minmax ==-1):
                     best_score = score
                     best_choice = xi
-                game_board[xi][yi] = 0
+                if minmax==1:
+                    alpha = max(alpha,score)
+                    if beta<alpha:
+                        
+                        # print("PRUNE %d <=%d : ret %d"%(beta,alpha,best_score))
+                        return best_score
+                elif minmax==-1:
+                    beta = min(beta,score)
+                    if beta<alpha:
+                        # print("PRUNE %d <=%d : ret %d"%(beta,alpha,best_score))
+                        return best_score
+                
+                
             xi+=1
         return best_score
 
@@ -201,13 +214,18 @@ class Smart_Agent(object):
         valid = []
         xi=0
         max_score = -10000000000000000
+        alpha = -1000000000000000
+                
+        beta = 1000000000000000
+        
         best_choice = -1
         for column in game_board:
             if column[0] == 0:
                 yi = self.put_disc(xi,game_board)
                 game_board[xi][yi] = self.order
-                score = self.evaluate(game_board, xi, yi,self.order*-1, 1, turn, -1, "  ")
-                # print("CHOICE %d with score %d"%(xi,score))
+                score = self.evaluate(game_board, xi, yi,self.order*-1, 1, turn, -1, alpha,beta)
+                print("CHOICE %d with score %d"%(xi,score))
+                alpha = max(alpha, score)
                 if score>max_score:
                     valid = []
                     max_score = score
@@ -217,7 +235,7 @@ class Smart_Agent(object):
                 game_board[xi][yi] = 0
             xi+=1
         choice = valid[randint(len(valid),size=1)[0]]
-        print("SA: PICKED %d WITH SCORE %d"%(choice,max_score))
+        print("PICKED %d WITH SCORE %d"%(choice,max_score))
         
         # time.sleep(10)
         return choice
